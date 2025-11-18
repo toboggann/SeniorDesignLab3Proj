@@ -1,0 +1,215 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #FFD700; /* Gold background */
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+/* Horizontal Navigation Bar */
+.horizontal-nav {
+    background-color: #444;
+    padding: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-menu li {
+    position: relative;
+}
+
+.nav-menu a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-menu a:hover {
+    background-color: #555;
+    border-bottom: 3px solid #FFD700;
+}
+
+.nav-menu a.active {
+    background-color: #333;
+    border-bottom: 3px solid #FFD700;
+}
+
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 0 0 5px 5px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #eee;
+    border-left: 4px solid transparent;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    border-left: 4px solid #333;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #555;
+    border-bottom: 3px solid #FFD700;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    max-width: 1200px;
+    margin: 2rem auto;
+    width: 100%;
+}
+
+.content {
+    flex: 1;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.welcome-section h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.team-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    margin-top: 1.5rem;
+}
+
+.member-info {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.member-image {
+    flex: 0 0 200px;
+}
+
+.member-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.member-details {
+    flex: 1;
+}
+
+.member-details h3 {
+    margin: 1rem 0 0.5rem;
+    color: #333;
+    border-bottom: 2px solid #FFD700;
+    padding-bottom: 0.3rem;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem;
+    }
+    
+    .content {
+        padding: 1.5rem;
+    }
+    
+    .member-info {
+        flex-direction: column;
+    }
+    
+    .member-image {
+        flex: 0 0 auto;
+        max-width: 200px;
+        margin: 0 auto;
+    }
+    
+    /* Mobile responsive nav */
+    .nav-menu {
+        flex-direction: column;
+    }
+    
+    .dropdown-content {
+        position: static;
+        display: none;
+        width: 100%;
+        box-shadow: none;
+    }
+    
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+}
