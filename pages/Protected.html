@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Content - Senior Design</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/protected.css">
+</head>
+<body>
+    <header>
+        <h1>SENIOR DESIGN LAB 1</h1>
+        <div class="subtitle">Project Dashboard</div>
+    </header>
+    
+    <!-- Horizontal Navigation Bar -->
+    <nav class="horizontal-nav">
+        <ul class="nav-menu">
+            <li><a href="home.html">Home</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Team Members</a>
+                <div class="dropdown-content">
+                    <a href="Thomas.html">Thomas Tsilimigras</a>
+                    <a href="Joshua.html">Josh Abello</a>
+                    <a href="Manny.html">Manvir Guraya</a>
+                    <a href="Nathan.html">Nathan Brewer</a>
+                </div>
+            </li>
+            <li><a href="Protected.html" class="active">Protected Page</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <main class="content">
+            <!-- Password Form (shown initially) -->
+            <div id="passwordSection" class="password-section">
+                <div class="password-form">
+                    <h2>Protected Content</h2>
+                    <p class="password-instruction">
+                        Please enter the password to access protected content
+                    </p>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Access Protected Content</button>
+                    </form>
+                    <div id="errorMessage" class="error-message">
+                        Incorrect password. Please try again.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Protected Content (hidden until authenticated) -->
+            <div id="protectedContent" class="protected-content-section">
+                <h2>Protected Contact Messages</h2>
+                <p>This page contains all submitted contact form messages.</p>
+                
+                <div id="messagesContainer">
+                    <ul id="messageList" class="message-list">
+                        <!-- Messages will be dynamically added here -->
+                    </ul>
+                    <div id="noMessages" class="no-messages">
+                        No messages have been submitted yet.
+                    </div>
+                </div>
+                
+                <div class="protected-actions">
+                    <button id="logoutBtn" class="logout-btn">Logout</button>
+                    <a href="home.html" class="home-link">Return to Home</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <footer>
+        <p>Senior Design Lab 1 &copy; 2025</p>
+        <p>Team Device Manager</p>
+    </footer>
+
+    <script src="/Scripts/protected.js"></script>
+</body>
+</html>
