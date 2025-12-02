@@ -10,21 +10,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const messageList = document.getElementById('messageList');
     const noMessages = document.getElementById('noMessages');
     
-    // Check if already authenticated
+    // check if already authenticated
     if (isAuthenticated()) {
         showProtectedContent();
     } else {
         showPasswordForm();
     }
     
-    // Handle login form submission
+    // handle login form submission
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const password = document.getElementById('password').value;
         const hashedPassword = hashPassword(password);
+        console.log(password);
+        console.log(hashedPassword);
         
         // Compare with hashed version of correct password
-        if (hashedPassword === '8f9b0e7c6d5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e') {
+        if (hashedPassword === '-51636e7e') {
             createAuthSession();
             showProtectedContent();
         } else {
@@ -33,14 +35,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Handle logout
+    // handle logout
     logoutBtn.addEventListener('click', function() {
         sessionStorage.removeItem(AUTH_TOKEN);
         showPasswordForm();
     });
     
     function hashPassword(password) {
-        // Simple hash function
         let hash = 0;
         for (let i = 0; i < password.length; i++) {
             const char = password.charCodeAt(i);
