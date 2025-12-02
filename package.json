@@ -1,0 +1,23 @@
+{
+  "name": "lab-password-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1"
+  },
+  "description": "",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toboggann/SeniorDesignLab3Proj.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toboggann/SeniorDesignLab3Proj/issues"
+  },
+  "homepage": "https://github.com/toboggann/SeniorDesignLab3Proj#readme"
+}

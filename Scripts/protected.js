@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
+    const VERIFY_PASSWORD_ENDPOINT = 'http://localhost:3000/verify';
     const AUTH_TOKEN = 'lab3_auth_token';
     
     const passwordSection = document.getElementById('passwordSection');
@@ -9,46 +10,56 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
     const messageList = document.getElementById('messageList');
     const noMessages = document.getElementById('noMessages');
-    
+
     // check if already authenticated
     if (isAuthenticated()) {
         showProtectedContent();
     } else {
         showPasswordForm();
     }
-    
+
     // handle login form submission
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const password = document.getElementById('password').value;
-        const hashedPassword = hashPassword(password);
-        console.log(password);
-        console.log(hashedPassword);
         
-        // Compare with hashed version of correct password
-        if (hashedPassword === '-51636e7e') {
-            createAuthSession();
-            showProtectedContent();
-        } else {
-            errorMessage.style.display = 'block';
-            document.getElementById('password').value = '';
+        errorMessage.style.display = 'none';
+        
+        try {
+            const response = await fetch(VERIFY_PASSWORD_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }, // Use JSON
+                body: JSON.stringify({ password: password })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const result = await response.json();
+            if (result.success) {
+                createAuthSession();
+                showProtectedContent();
+            } else {
+                showError('Invalid password. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error during password verification:', error);
+            showError('Connection error. Please check if server is running.');
         }
     });
     
-    // handle logout
+    // Handle logout
     logoutBtn.addEventListener('click', function() {
         sessionStorage.removeItem(AUTH_TOKEN);
         showPasswordForm();
     });
     
-    function hashPassword(password) {
-        let hash = 0;
-        for (let i = 0; i < password.length; i++) {
-            const char = password.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-        }
-        return hash.toString(16);
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
     }
     
     function createAuthSession() {
@@ -129,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function escapeHtml(unsafe) {
+        if (!unsafe) return '';
         return unsafe
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
