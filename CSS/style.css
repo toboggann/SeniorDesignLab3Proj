@@ -29,6 +29,9 @@ h1 {
     font-size: 1.1rem;
     opacity: 0.8;
 }
+html{
+    scroll-behavior: smooth;
+}
 
 /* Horizontal Navigation Bar */
 .horizontal-nav {
@@ -148,41 +151,38 @@ h1 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 20px;
+    row-gap: 0px;
     margin: 0 auto;
     width: 80%;
 }
-
-.member-homebox {
+.member-homebox{
     overflow: hidden;
     background-color: white;
-    flex: 1;
+    flex:1;
+    height:90%;
 }
-
-.member-homebox h2 {
-    text-align: center;
-    width: 100%;
-    margin-bottom: 2rem;
+.member-content{
+    display:flex;
+    flex:1;
+    padding-top: 0%;
 }
-
-.member-content {
-    display: flex;
+.member-hometext{
     flex: 1;
+    text-align: left;
+    padding:20px;
 }
-
-.member-hometext, .member-homeimage {
+.member-homeimage{
     flex: 1;
-    padding: 2rem;
 }
 
 .member-homeimage img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    object-fit: cover;
+    width:100%;
+    height:auto;
+    object-fit: contain;
 }
 
 .team-image img {
-    max-width: 100%;
+    max-width: 50%;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
