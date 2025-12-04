@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     navLinks.forEach(link => {
         const linkHref = link.getAttribute('href');
         if (linkHref === currentPage || 
-            (currentPage === '' && linkHref === 'home.html') ||
-            (currentPage === 'index.html' && linkHref === 'home.html')) {
+            (currentPage === '' && linkHref === 'index.html') ||
+            (currentPage === 'index.html' && linkHref === 'index.html')) {
             link.classList.add('active');
         }
     });

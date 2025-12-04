@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Senior Design Lab 1</title>
+    <title>Senior Design Lab 3</title>
     <link rel="stylesheet" href="/CSS/style.css">
 </head>
 <body>
@@ -20,7 +20,7 @@
                 <a href="index.html#team-section" class="dropbtn">Team Members</a>
                 <div class="dropdown-content">
                     <a href="Thomas.html">Thomas Tsilimigras</a>
-                    <a href="Joshua.html">Josh Abello</a>
+                    <a href="Joshua.html">Joshua Abello</a>
                     <a href="Manny.html">Manvir Guraya</a>
                     <a href="Nathan.html">Nathan Brewer</a>
                 </div>
@@ -29,26 +29,42 @@
         </ul>
     </nav>
     
-    <div class="container">
-        <main class="content">
-            <h2>Thomas Tsilimigras</h2>
-            <div class="member-info">
-                <div class="member-image">
+    <div class="page-container">
+        <div class="main-content">
+            <div class="member-header">
+                <h2>Thomas Tsilimigras</h2>
+            </div>
+            
+            <div class="member-profile">
+                <div class="profile-image">
                     <img src="./Images/Thomas.jpg" alt="Thomas Tsilimigras">
                 </div>
-                <div class="member-details">
+                <div class="profile-details">
                     <h3>About Thomas</h3>
-                    <p>Thomas is a dedicated engineering student with a passion for innovative solutions and team collaboration.</p>
-                    <h3>Role in Project</h3>
-                    <p>Thomas serves as the Project Lead, responsible for coordinating team efforts and ensuring project milestones are met.</p>
+                    <p>Thomas is a dedicated engineering student with a passion for innovative solutions and team collaboration. He brings strong technical skills and creative problem-solving abilities to the team.</p>
+                    
                     <h3>Contact Information</h3>
-                    <p>Email: thomas@example.com</p>
-                    <p>Phone: (555) 123-4567</p>
+                    <p>Email: tomtsi2229@gmail.com</p>
+                    <p>Phone: (555) 987-6543</p>
+                    <p>LinkedIn: linkedin.com/in/thomas-tsi/</p>
                 </div>
             </div>
-        </main>
+        </div>
+        
+        <div class="contact-section">
+            <h3>Contact Thomas</h3>
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <textarea id="message" placeholder="Your message here... Please include your contact information and the purpose of your inquiry." required></textarea>
+                <button type="submit">Send Message</button>
+                <div id="formMessage" class="message"></div>
+            </form>
+            <br>
+        </div>
     </div>
-    
+
+
     <footer>
         <p>Senior Design Lab 1 &copy; 2025</p>
         <p>Team Device Manager</p>
