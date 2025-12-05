@@ -17,7 +17,7 @@ def update_env(new_password: str):
     print("New hashed password:", hashed)
 
     with open(".env", "w") as f:
-        f.write(f"LAB_PASSWORD_HASH={hashed}\n")
+        f.write(f'LAB_PASSWORD_HASH="{hashed}"\n')
 
     print("Updated .env successfully.")
 
