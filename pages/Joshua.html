@@ -143,9 +143,9 @@
     
     <nav class="horizontal-nav">
         <ul class="nav-menu">
-            <li><a href="home.html">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li class="dropdown">
-                <a href="#" class="dropbtn">Team Members</a>
+                <a href="index.html#team-section" class="dropbtn">Team Members</a>
                 <div class="dropdown-content">
                     <a href="Thomas.html">Thomas Tsilimigras</a>
                     <a href="Joshua.html">Joshua Abello</a>
@@ -157,35 +157,47 @@
         </ul>
     </nav>
     
-    <div class="container">
-        <main class="content">
-            <h2>Joshua Abello</h2>
-
-            <div class="member-info">
-                <div class="member-image">
-                    <img src="./Images/Joshua.jpg" alt="Joshua Abello">
+    <div class="page-container">
+        <div class="main-content">
+            <div class="member-header">
+                <h2>Joshua Abello</h2>
+            </div>
+            
+            <div class="member-profile">
+                <div class="profile-image">
+                    <img src="/pics/joshuaPic.JPG" alt="Joshua Abello">
                 </div>
-
-                <div class="member-details">
+                <div class="profile-details">
                     <h3>About Joshua</h3>
-                    <p>Joshua is a committed engineering student passionate about solving real-world problems and contributing strong technical skills to the team.</p>
-
-                    <h3>Role in Project</h3>
-                    <p>Joshua leads backend development and system integration, ensuring the project functions smoothly and reliably.</p>
-
+                    <p>Joshua is a dedicated engineering student with a passion for innovative solutions and team collaboration. He brings strong technical skills and creative problem-solving abilities to the team.</p>
+                                        
                     <h3>Contact Information</h3>
-                    <p>Email: joshua@example.com</p>
+                    <p>Email: joshua.abello@example.com</p>
                     <p>Phone: (555) 987-6543</p>
+                    <p>LinkedIn: linkedin.com/in/joshuaabello</p>
                 </div>
             </div>
-        </main>
+        </div>
+        
+        <div class="contact-section">
+            <h3>Contact Joshua</h3>
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <textarea id="message" placeholder="Your message here... Please include your contact information and the purpose of your inquiry." required></textarea>
+                <button type="submit">Send Message</button>
+                <div id="formMessage" class="message"></div>
+            </form>
+            <br>
+        </div>
     </div>
-    
+
+
     <footer>
         <p>Senior Design Lab 3 &copy; 2025</p>
         <p>Team Device Manager</p>
     </footer>
 
-    <script src="Scripts/joshua.js"></script>
+    <script src="../scripts/joshua.js"></script>
 </body>
 </html>

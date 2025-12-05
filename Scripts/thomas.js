@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     navLinks.forEach(link => {
         const linkHref = link.getAttribute('href');
         if (linkHref === currentPage || 
-            (currentPage === '' && linkHref === 'home.html') ||
-            (currentPage === 'index.html' && linkHref === 'home.html')) {
+            (currentPage === '' && linkHref === 'index.html') ||
+            (currentPage === 'index.html' && linkHref === 'index.html')) {
             link.classList.add('active');
         }
     });
@@ -34,6 +34,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     dropdown.style.display = 'none';
                 }
             });
+        }
+    });
+    //contact form
+    const form = document.getElementById("contactForm");
+    const submitMessage = document.getElementById("formMessage");
+
+    form.addEventListener("submit",async function(e){
+        e.preventDefault(); //stop refresh
+        console.log("Form submitted!");
+        
+
+        const data ={
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            message: document.getElementById("message").value,
+        };
+        //send
+        try{
+            const response = await fetch("http://localhost:3000/contact",{
+                method:"POST",
+                headers:{"Content-Type": "application/json"},
+                body:JSON.stringify(data)
+            });
+            const responseResult = await response.json();
+            if(responseResult.success){
+                submitMessage.textContent="Message sent";
+                submitMessage.style.display = "block";
+                document.getElementById("name").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("message").value = "";
+            }
+            else{
+                submitMessage.textContent="Message failed to send";
+                submitMessage.style.display = "block";
+            }
+        }
+        catch(error){
+            console.error("Error sending message:", error);
+            submitMessage.textContent="Server error";
         }
     });
 });

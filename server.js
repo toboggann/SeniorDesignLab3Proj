@@ -6,8 +6,7 @@ const EXPECTED_HASH = process.env.LAB_PASSWORD_HASH;
 
 // Make sure hash is set
 if (!EXPECTED_HASH) {
-    console.error('ERROR: LAB_PASSWORD_HASH not found in .env file');
-    console.error('Create a .env file with: LAB_PASSWORD_HASH=-51636e7e');
+    console.log("error reashing hash")
     process.exit(1);
 }
 
@@ -25,13 +24,23 @@ function hashPassword(password) {
 }
 
 const server = http.createServer((req, res) => {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    // ==================== CORS HEADERS ====================
+    // These headers allow the frontend (on a different port) to access this server
     
-    // Handle preflight OPTIONS request
+    // NOTE FOR TOMMY: replace '*' with specific domain like once we have the website set up
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    // POST is for submitting password data, OPTIONS is for preflight requests
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    
+    // Specify which request headers the browser can send
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // allow cookies/authentication to be sent with requests
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    // ==================== END CORS HEADERS ====================
+    
+    // manage preflight OPTIONS request
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
         res.end();
@@ -39,7 +48,7 @@ const server = http.createServer((req, res) => {
     }
     
     // Handle POST request to /verify
-    if (req.method === 'POST' && req.url === '/verify') {
+    else if (req.method === 'POST' && req.url === '/verify') {
         let body = '';
         
         req.on('data', chunk => {
@@ -88,7 +97,34 @@ const server = http.createServer((req, res) => {
                 }));
             }
         });
-    } else {
+    }
+    else if(req.method==='POST' && req.url ==='/contact'){
+        let body ='';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on ('end',()=>{
+            try{
+                const data = JSON.parse(body);
+                const {name,email,message}=data;
+                if(!name||!email||!message){
+                    res.writeHead(400,{'Content-Type':'application.json'});
+                    res.end(JSON.stringify({success: false, error: 'Incomplete form'}));
+                    return;
+                }
+                console.log(name);
+                console.log(email);
+                console.log(message);
+                res.writeHead(200,{'Content-Type': 'application/json'});
+                res.end(JSON.stringify({success:true}));
+            }
+            catch(error){
+                res.writeHead(400,{'Content-Type': 'application/json'});
+                res.end(JSON.stringify({success: false, error: 'Error JSON'}));
+            }
+        });
+    }
+    else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Not found' }));
     }

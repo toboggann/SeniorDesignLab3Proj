@@ -142,9 +142,9 @@
     
     <nav class="horizontal-nav">
         <ul class="nav-menu">
-            <li><a href="home.html">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li class="dropdown">
-                <a href="#" class="dropbtn">Team Members</a>
+                <a href="index.html#team-section" class="dropbtn">Team Members</a>
                 <div class="dropdown-content">
                     <a href="Thomas.html">Thomas Tsilimigras</a>
                     <a href="Joshua.html">Joshua Abello</a>
@@ -156,35 +156,46 @@
         </ul>
     </nav>
     
-    <div class="container">
-        <main class="content">
-            <h2>Nathan Brewer</h2>
-
-            <div class="member-info">
-                <div class="member-image">
-                    <img src="./Images/Nathan.jpg" alt="Nathan Brewer">
+    <div class="page-container">
+        <div class="main-content">
+            <div class="member-header">
+                <h2>Nathan Brewer</h2>
+            </div>
+            
+            <div class="member-profile">
+                <div class="profile-image">
+                    <img src="./Images/Joshua.jpg" alt="Joshua Abello">
                 </div>
-
-                <div class="member-details">
+                <div class="profile-details">
                     <h3>About Nathan</h3>
-                    <p>Nathan is an enthusiastic engineering student who brings strong analytical thinking and software development skills to the team.</p>
-
-                    <h3>Role in Project</h3>
-                    <p>Nathan contributes to system software design and assists with data processing and testing phases of the project.</p>
-
+                    <p>Nathan is a dedicated engineering student with a passion for innovative solutions and team collaboration. He brings strong technical skills and creative problem-solving abilities to the team.</p>
+                    
                     <h3>Contact Information</h3>
                     <p>Email: nathan@example.com</p>
                     <p>Phone: (555) 444-8910</p>
                 </div>
             </div>
-        </main>
+        </div>
+        
+        <div class="contact-section">
+            <h3>Contact Nathan</h3>
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <textarea id="message" placeholder="Your message here... Please include your contact information and the purpose of your inquiry." required></textarea>
+                <button type="submit">Send Message</button>
+                <div id="formMessage" class="message"></div>
+            </form>
+            <br>
+        </div>
     </div>
-    
+
+
     <footer>
         <p>Senior Design Lab 3 &copy; 2025</p>
         <p>Team Device Manager</p>
     </footer>
 
-    <script src="Scripts/nathan.js"></script>
+    <script src="../scripts/nathan.js"></script>
 </body>
 </html>

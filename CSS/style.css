@@ -29,6 +29,9 @@ h1 {
     font-size: 1.1rem;
     opacity: 0.8;
 }
+html{
+    scroll-behavior: smooth;
+}
 
 /* Horizontal Navigation Bar */
 .horizontal-nav {
@@ -132,51 +135,54 @@ h1 {
     margin-bottom: 1rem;
     color: #333;
 }
-.team-section{
-    text-align:center;
-    margin-bottom:2rem;
+
+.team-section {
+    text-align: center;
+    margin-bottom: 2rem;
 }
+
 .team-section h2 {
     margin-bottom: 1rem;
     color: #000000;
 }
-/*Team boxes home*/
-.team-boxes{
-    display:grid;
-    grid-template-columns: repeat(2,1fr);
+
+/* Team boxes home */
+.team-boxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     column-gap: 20px;
+    row-gap: 0px;
     margin: 0 auto;
-    width:80%;
+    width: 80%;
 }
 .member-homebox{
-    /*border-radius:10px;
-    /*box-shadow: 0 5px 15px rgba(0,0,0,0.1);*/
     overflow: hidden;
     background-color: white;
     flex:1;
-}
-.member-homebox h2{
-    text-align: center;
-    width: 100%;
-    margin-bottom: 2rem;
+    height:90%;
 }
 .member-content{
     display:flex;
     flex:1;
+    padding-top: 0%;
 }
-.member-hometext, .member-homeimage{
+.member-hometext{
     flex: 1;
-    padding: 2rem;
+    text-align: left;
+    padding:20px;
 }
+.member-homeimage{
+    flex: 1;
+}
+
 .member-homeimage img {
     width:100%;
     height:auto;
-    border-radius: 10px;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .team-image img {
-    max-width: 100%;
+    max-width: 50%;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
@@ -210,47 +216,186 @@ h1 {
     padding-bottom: 0.3rem;
 }
 
+/* ============ NEW STYLES ADDED HERE ============ */
+
+/* Page container for consistent layout */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+/* Main content area styling */
+.main-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 2.5rem;
+    margin: 2rem auto;
+}
+
+/* member header styling */
+.member-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #FFD700;
+}
+
+.member-header h2 {
+    font-size: 2.2rem;
+    color: #000;
+    margin-bottom: 0.5rem;
+}
+
+/* member profile grid layout */
+.member-profile {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    align-items: start;
+    margin-bottom: 3rem;
+}
+
+.profile-image {
+    text-align: center;
+}
+
+.profile-image img {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    border: 3px solid #FFD700;
+}
+
+.profile-details h3 {
+    color: #000;
+    font-size: 1.4rem;
+    margin: 1.5rem 0 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #FFD700;
+}
+
+.profile-details h3:first-child {
+    margin-top: 0;
+}
+
+.profile-details p {
+    margin-bottom: 1rem;
+    color: #555;
+    line-height: 1.7;
+}
+
+/* contact Form Styling */
+.contact-section {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 2.5rem;
+    margin: 2rem auto;
+    max-width: 800px;
+}
+
+.contact-section h3 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #000;
+    margin-bottom: 1.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 3px solid #FFD700;
+}
+
+/* contact form specific styles */
+#contactForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#contactForm input,
+#contactForm textarea {
+    padding: 0.9rem 1.2rem;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+#contactForm input:focus,
+#contactForm textarea:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+#contactForm input::placeholder,
+#contactForm textarea::placeholder {
+    color: #999;
+}
+
+#contactForm textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+#contactForm button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.5rem;
+}
+
+#contactForm button:hover {
+    background-color: #444;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#contactForm button:active {
+    transform: translateY(0);
+}
+
+/* form message styling */
+#formMessage {
+    padding: 1rem;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 1rem;
+    display: none;
+}
+
+#formMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+#formMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Footer styling */
 footer {
     background-color: #333;
     color: white;
     text-align: center;
     padding: 1rem;
     margin-top: auto;
-}
-
-
-@media (max-width: 768px) {
-    .container {
-        margin: 1rem;
-    }
-    
-    .content {
-        padding: 1.5rem;
-    }
-    
-    .member-info {
-        flex-direction: column;
-    }
-    
-    .member-image {
-        flex: 0 0 auto;
-        max-width: 200px;
-        margin: 0 auto;
-    }
-    
-    /* Mobile responsive nav */
-    .nav-menu {
-        flex-direction: column;
-    }
-    
-    .dropdown-content {
-        position: static;
-        display: none;
-        width: 100%;
-        box-shadow: none;
-    }
-    
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
 }
