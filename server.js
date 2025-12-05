@@ -235,29 +235,35 @@ const server = http.createServer((req, res) => {
   }
 
   // ====================== API: CONTACT FORM SAVE ======================
-  if (req.method === "POST" && (req.url === "/contact" || req.url === "/contact/")) {
-    let body = "";
-    req.on("data", (chunk) => (body += chunk.toString()));
+  // ====================== API: CONTACT FORM SAVE ======================
+if (req.method === "POST" && (req.url === "/contact" || req.url === "/contact/")) {
+  let body = "";
+  req.on("data", (chunk) => (body += chunk.toString()));
 
-    req.on("end", () => {
-      try {
-        const data = parseBody(req, body);
-        const { name, email, message, member } = data;
+  req.on("end", () => {
+    try {
+      const data = parseBody(req, body);
+      const { name, email, message, member } = data;
 
-        if (!name || !email || !message) {
-          sendJson(res, 400, { success: false, error: "Missing fields" });
-          return;
-        }
+      console.log("CONTACT REQUEST DATA:", data);  // 👈 ADD THIS
 
-        const dir = path.join(__dirname, "protected_messages");
-        fs.mkdirSync(dir, { recursive: true });
+      if (!name || !email || !message) {
+        console.log("CONTACT: missing fields");    // 👈 AND THIS
+        sendJson(res, 400, { success: false, error: "Missing fields" });
+        return;
+      }
 
-        const timestamp = Date.now();
-        const safeName = String(name).replace(/[^a-z0-9]/gi, "_");
-        const filename = `${timestamp}_${safeName}.html`;
-        const filePath = path.join(dir, filename);
+      const dir = path.join(__dirname, "protected_messages");
+      fs.mkdirSync(dir, { recursive: true });
 
-        const html = `<!DOCTYPE html>
+      const timestamp = Date.now();
+      const safeName = String(name).replace(/[^a-z0-9]/gi, "_");
+      const filename = `${timestamp}_${safeName}.html`;
+      const filePath = path.join(dir, filename);
+
+      console.log("WRITING FILE TO:", filePath);  // 👈 AND THIS
+
+      const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><title>Message</title></head>
 <body>
@@ -271,16 +277,19 @@ const server = http.createServer((req, res) => {
 </body>
 </html>`;
 
-        fs.writeFileSync(filePath, html);
-        sendJson(res, 200, { success: true });
-      } catch (e) {
-        console.error("CONTACT SAVE ERROR:", e);
-        sendJson(res, 500, { success: false });
-      }
-    });
+      fs.writeFileSync(filePath, html);
+      console.log("CONTACT: saved successfully ✅"); // 👈 AND THIS
 
-    return;
-  }
+      sendJson(res, 200, { success: true });
+    } catch (e) {
+      console.error("CONTACT SAVE ERROR:", e);      // 👈 THIS ALREADY EXISTS
+      sendJson(res, 500, { success: false });
+    }
+  });
+
+  return;
+}
+
 
   // ====================== PROTECTED: GET MESSAGE LIST ======================
   if (req.method === "GET" && req.url === "/messages") {
