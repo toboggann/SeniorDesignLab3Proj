@@ -1,5 +1,3 @@
-# hash_update.py — offline password updater required by your lab
-
 import sys
 
 def hash_password(password: str) -> str:
