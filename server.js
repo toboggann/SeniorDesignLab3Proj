@@ -1,8 +1,9 @@
-// server.js — Heroku-ready: serves your static site + API endpoints
+// server.js — Heroku-ready: serves static site + API endpoints + 30-min sessions
 
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 require("dotenv").config();
 
 // Load hashed password
@@ -12,6 +13,64 @@ const EXPECTED_HASH = process.env.LAB_PASSWORD_HASH;
 if (!EXPECTED_HASH) {
   console.error("ERROR: LAB_PASSWORD_HASH missing (set it in Heroku Config Vars)");
   process.exit(1);
+}
+
+// ===================== 30-MIN SESSION STORE (in memory) =====================
+const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const sessions = new Map(); // token -> expiresAt (ms)
+
+// cleanup expired sessions occasionally
+setInterval(() => {
+  const now = Date.now();
+  for (const [token, exp] of sessions.entries()) {
+    if (exp <= now) sessions.delete(token);
+  }
+}, 60 * 1000).unref();
+
+function parseCookies(req) {
+  const header = req.headers.cookie || "";
+  const out = {};
+  header.split(";").forEach((part) => {
+    const [k, ...v] = part.trim().split("=");
+    if (!k) return;
+    out[k] = decodeURIComponent(v.join("=") || "");
+  });
+  return out;
+}
+
+function setSessionCookie(res, token, maxAgeSeconds) {
+  // Secure cookies only over HTTPS. Heroku is HTTPS, localhost usually isn't.
+  const isHeroku = !!process.env.DYNO;
+  const secure = isHeroku ? "; Secure" : "";
+
+  res.setHeader(
+    "Set-Cookie",
+    `sd_session=${encodeURIComponent(token)}; Max-Age=${maxAgeSeconds}; Path=/; HttpOnly; SameSite=Lax${secure}`
+  );
+}
+
+function clearSessionCookie(res) {
+  const isHeroku = !!process.env.DYNO;
+  const secure = isHeroku ? "; Secure" : "";
+  res.setHeader(
+    "Set-Cookie",
+    `sd_session=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax${secure}`
+  );
+}
+
+function getValidSession(req) {
+  const cookies = parseCookies(req);
+  const token = cookies.sd_session;
+  if (!token) return null;
+
+  const exp = sessions.get(token);
+  if (!exp) return null;
+
+  if (exp <= Date.now()) {
+    sessions.delete(token);
+    return null;
+  }
+  return token;
 }
 
 // Hash function (MUST match browser exactly)
@@ -61,15 +120,11 @@ function isAllowedStaticPath(urlPath) {
 }
 
 function serveStatic(req, res) {
-  // Map "/" to "/index.html"
   let urlPath = req.url === "/" ? "/index.html" : req.url;
-
-  // Strip query string
   urlPath = urlPath.split("?")[0];
 
   if (!isAllowedStaticPath(urlPath)) return false;
 
-  // Normalize + prevent path traversal
   const decoded = decodeURIComponent(urlPath);
   const normalized = path.normalize(decoded);
 
@@ -97,8 +152,25 @@ function serveStatic(req, res) {
   return true;
 }
 
+// Parse request body as JSON OR x-www-form-urlencoded
+function parseBody(req, raw) {
+  const ct = (req.headers["content-type"] || "").toLowerCase();
+
+  if (ct.includes("application/json")) {
+    return JSON.parse(raw || "{}");
+  }
+
+  if (ct.includes("application/x-www-form-urlencoded")) {
+    const params = new URLSearchParams(raw);
+    return Object.fromEntries(params.entries());
+  }
+
+  // fallback
+  return JSON.parse(raw || "{}");
+}
+
 const server = http.createServer((req, res) => {
-  // CORS
+  // CORS (fine for same-origin use; if you ever use fetch with credentials, don't use "*")
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -109,16 +181,23 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // ===================== API: VERIFY PASSWORD ======================
-  if (req.method === "POST" && req.url === "/verify") {
+  // ===================== API: VERIFY PASSWORD (SETS 30-MIN SESSION) ======================
+  if (req.method === "POST" && (req.url === "/verify" || req.url === "/verify/")) {
     let body = "";
     req.on("data", (chunk) => (body += chunk.toString()));
     req.on("end", () => {
       try {
-        const data = JSON.parse(body);
+        const data = parseBody(req, body);
         const password = data.password || "";
         const hashed = hashPassword(password);
         const success = hashed === EXPECTED_HASH;
+
+        if (success) {
+          const token = crypto.randomBytes(32).toString("hex");
+          sessions.set(token, Date.now() + SESSION_TTL_MS);
+          setSessionCookie(res, token, 30 * 60); // 30 minutes
+        }
+
         sendJson(res, 200, { success });
       } catch {
         sendJson(res, 400, { success: false });
@@ -127,26 +206,54 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ===================== API: SESSION CHECK (REFRESHES TTL) ======================
+  if (req.method === "GET" && (req.url === "/session" || req.url === "/session/")) {
+    const token = getValidSession(req);
+
+    if (!token) {
+      clearSessionCookie(res);
+      sendJson(res, 200, { authenticated: false });
+      return;
+    }
+
+    // Refresh session to 30 minutes from now (so clicking away/back stays logged in)
+    sessions.set(token, Date.now() + SESSION_TTL_MS);
+    setSessionCookie(res, token, 30 * 60);
+
+    sendJson(res, 200, { authenticated: true });
+    return;
+  }
+
+  // ===================== API: LOGOUT ======================
+  if (req.method === "POST" && (req.url === "/logout" || req.url === "/logout/")) {
+    const cookies = parseCookies(req);
+    const token = cookies.sd_session;
+    if (token) sessions.delete(token);
+    clearSessionCookie(res);
+    sendJson(res, 200, { success: true });
+    return;
+  }
+
   // ====================== API: CONTACT FORM SAVE ======================
-  if (req.method === "POST" && req.url === "/contact") {
+  if (req.method === "POST" && (req.url === "/contact" || req.url === "/contact/")) {
     let body = "";
     req.on("data", (chunk) => (body += chunk.toString()));
 
     req.on("end", () => {
       try {
-        const data = JSON.parse(body);
+        const data = parseBody(req, body);
         const { name, email, message, member } = data;
 
         if (!name || !email || !message) {
-          sendJson(res, 400, { success: false });
+          sendJson(res, 400, { success: false, error: "Missing fields" });
           return;
         }
 
         const dir = path.join(__dirname, "protected_messages");
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+        fs.mkdirSync(dir, { recursive: true });
 
         const timestamp = Date.now();
-        const safeName = name.replace(/[^a-z0-9]/gi, "_");
+        const safeName = String(name).replace(/[^a-z0-9]/gi, "_");
         const filename = `${timestamp}_${safeName}.html`;
         const filePath = path.join(dir, filename);
 
@@ -166,7 +273,8 @@ const server = http.createServer((req, res) => {
 
         fs.writeFileSync(filePath, html);
         sendJson(res, 200, { success: true });
-      } catch {
+      } catch (e) {
+        console.error("CONTACT SAVE ERROR:", e);
         sendJson(res, 500, { success: false });
       }
     });
@@ -174,10 +282,14 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // ====================== API: GET MESSAGE LIST ======================
+  // ====================== PROTECTED: GET MESSAGE LIST ======================
   if (req.method === "GET" && req.url === "/messages") {
-    const dir = path.join(__dirname, "protected_messages");
+    if (!getValidSession(req)) {
+      sendJson(res, 401, { error: "Unauthorized" });
+      return;
+    }
 
+    const dir = path.join(__dirname, "protected_messages");
     if (!fs.existsSync(dir)) {
       sendJson(res, 200, []);
       return;
@@ -188,8 +300,13 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // ====================== API: SERVE INDIVIDUAL MESSAGE ======================
+  // ====================== PROTECTED: SERVE INDIVIDUAL MESSAGE ======================
   if (req.method === "GET" && req.url.startsWith("/messages/")) {
+    if (!getValidSession(req)) {
+      sendJson(res, 401, { error: "Unauthorized" });
+      return;
+    }
+
     const filename = decodeURIComponent(req.url.replace("/messages/", ""));
 
     if (filename.includes("..")) {
