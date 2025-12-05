@@ -1,20 +1,2 @@
-# Environment variables (must NEVER be submitted)
+node_modules
 .env
-
-# Protected messages folder (TA will generate new messages)
-protected_messages/
-
-# Node modules (HUGE folder, never include)
-node_modules/
-
-# Logs
-*.log
-
-# macOS junk files
-.DS_Store
-
-# Python cache (if using password change script)
-__pycache__/
-
-# Optional: local development files
-messages.json
