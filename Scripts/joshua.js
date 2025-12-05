@@ -45,11 +45,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Form submitted!");
         
 
-        const data ={
-            name: document.getElementById("name").value,
-            email: document.getElementById("email").value,
-            message: document.getElementById("message").value,
-        };
+        const data = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    message: document.getElementById("message").value,
+    member: "Joshua"
+};
+
         //send
         try{
             const response = await fetch("http://localhost:3000/contact",{
@@ -58,17 +60,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 body:JSON.stringify(data)
             });
             const responseResult = await response.json();
-            if(responseResult.success){
-                submitMessage.textContent="Message sent";
-                submitMessage.style.display = "block";
-                document.getElementById("name").value = "";
-                document.getElementById("email").value = "";
-                document.getElementById("message").value = "";
-            }
-            else{
-                submitMessage.textContent="Message failed to send";
-                submitMessage.style.display = "block";
-            }
+
+if (responseResult.success) {
+    submitMessage.textContent = "Message sent!";
+    submitMessage.className = "success";
+    submitMessage.style.display = "block";
+
+    // clear form
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("message").value = "";
+} 
+else {
+    submitMessage.textContent = "Message failed to send";
+    submitMessage.className = "error";
+    submitMessage.style.display = "block";
+}
+
         }
         catch(error){
             console.error("Error sending message:", error);

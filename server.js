@@ -98,32 +98,75 @@ const server = http.createServer((req, res) => {
             }
         });
     }
-    else if(req.method==='POST' && req.url ==='/contact'){
-        let body ='';
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-        req.on ('end',()=>{
-            try{
-                const data = JSON.parse(body);
-                const {name,email,message}=data;
-                if(!name||!email||!message){
-                    res.writeHead(400,{'Content-Type':'application.json'});
-                    res.end(JSON.stringify({success: false, error: 'Incomplete form'}));
-                    return;
-                }
-                console.log(name);
-                console.log(email);
-                console.log(message);
-                res.writeHead(200,{'Content-Type': 'application/json'});
-                res.end(JSON.stringify({success:true}));
+    else if (req.method === 'POST' && req.url === '/contact') {
+    let body = '';
+
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+
+    req.on('end', () => {
+        try {
+            const data = JSON.parse(body);
+            const { name, email, message, member } = data;
+
+            if (!name || !email || !message) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, error: 'Incomplete form' }));
+                return;
             }
-            catch(error){
-                res.writeHead(400,{'Content-Type': 'application/json'});
-                res.end(JSON.stringify({success: false, error: 'Error JSON'}));
+
+            // Create messages directory if not exists
+            const fs = require('fs');
+            const path = require('path');
+            const dir = path.join(__dirname, "protected_messages");
+
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
             }
-        });
-    }
+
+            // filename
+            const timestamp = Date.now();
+            const safeName = name.replace(/[^a-z0-9]/gi, "_");
+            const filename = `${timestamp}_${safeName}.html`;
+            const filepath = path.join(dir, filename);
+
+            // build HTML content
+            const html = `
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Message Submission</h2>
+<p><strong>Name:</strong> ${name}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Time:</strong> ${new Date(timestamp).toLocaleString()}</p>
+<hr>
+<p>${message.replace(/\n/g, "<br>")}</p>
+</body>
+</html>
+`;
+
+            // Write the file
+            fs.writeFileSync(filepath, html);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                file: filename   // we will use this later
+            }));
+
+        } catch (error) {
+            console.error("Error saving message:", error);
+
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: false,
+                error: 'Server error'
+            }));
+        }
+    });
+}
+
     else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Not found' }));
