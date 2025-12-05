@@ -48,7 +48,7 @@ const server = http.createServer((req, res) => {
     }
     
     // Handle POST request to /verify
-    if (req.method === 'POST' && req.url === '/verify') {
+    else if (req.method === 'POST' && req.url === '/verify') {
         let body = '';
         
         req.on('data', chunk => {
@@ -97,7 +97,34 @@ const server = http.createServer((req, res) => {
                 }));
             }
         });
-    } else {
+    }
+    else if(req.method==='POST' && req.url ==='/contact'){
+        let body ='';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on ('end',()=>{
+            try{
+                const data = JSON.parse(body);
+                const {name,email,message}=data;
+                if(!name||!email||!message){
+                    res.writeHead(400,{'Content-Type':'application.json'});
+                    res.end(JSON.stringify({success: false, error: 'Incomplete form'}));
+                    return;
+                }
+                console.log(name);
+                console.log(email);
+                console.log(message);
+                res.writeHead(200,{'Content-Type': 'application/json'});
+                res.end(JSON.stringify({success:true}));
+            }
+            catch(error){
+                res.writeHead(400,{'Content-Type': 'application/json'});
+                res.end(JSON.stringify({success: false, error: 'Error JSON'}));
+            }
+        });
+    }
+    else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Not found' }));
     }

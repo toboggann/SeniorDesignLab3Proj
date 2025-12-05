@@ -5,6 +5,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.6.1"
   },
   "description": "",
@@ -19,5 +20,6 @@
   "bugs": {
     "url": "https://github.com/toboggann/SeniorDesignLab3Proj/issues"
   },
-  "homepage": "https://github.com/toboggann/SeniorDesignLab3Proj#readme"
+  "homepage": "https://github.com/toboggann/SeniorDesignLab3Proj#readme",
+  "type": "commonjs"
 }
