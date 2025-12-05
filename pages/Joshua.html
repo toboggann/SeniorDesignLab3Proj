@@ -80,14 +80,13 @@
             display: block;
         }
 
-
-        /* Container */
+        /* Main Container */
         .container {
             margin-top: 40px;
             display: flex;
             justify-content: center;
         }
-        
+
         .content {
             width: 100%;
             display: flex;
@@ -95,7 +94,7 @@
             align-items: center;
         }
 
-        /* Profile Card */
+        /* Member Info Box */
         .member-info {
             background-color: #111;
             border: 1px solid #FFD700;
@@ -118,12 +117,52 @@
         .member-details {
             margin-top: 20px;
             text-align: left;
-            padding: 0 20px;
         }
 
         .member-details h3 {
-            margin-top: 15px;
             color: #FFD700;
+            margin-top: 20px;
+        }
+
+        /* Contact Form Box */
+        .contact-box {
+            background-color: #111;
+            border: 1px solid #FFD700;
+            padding: 25px;
+            border-radius: 12px;
+            width: 70%;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .contact-box h3 {
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            background: #000;
+            border: 1px solid #FFD700;
+            color: #FFD700;
+            border-radius: 6px;
+        }
+
+        button {
+            background-color: #FFD700;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #ffffff;
         }
 
         footer {
@@ -136,51 +175,56 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>SENIOR DESIGN LAB 3</h1>
-        <div class="subtitle">Project Dashboard</div>
-    </header>
-    
-    <nav class="horizontal-nav">
-        <ul class="nav-menu">
-            <li><a href="index.html">Home</a></li>
-            <li class="dropdown">
-                <a href="index.html#team-section" class="dropbtn">Team Members</a>
-                <div class="dropdown-content">
-                    <a href="Thomas.html">Thomas Tsilimigras</a>
-                    <a href="Joshua.html">Joshua Abello</a>
-                    <a href="Manny.html">Manvir Guraya</a>
-                    <a href="Nathan.html">Nathan Brewer</a>
-                </div>
-            </li>
-            <li><a href="Protected.html">Protected Page</a></li>
-        </ul>
-    </nav>
-    
-    <div class="page-container">
-        <div class="main-content">
-            <div class="member-header">
-                <h2>Joshua Abello</h2>
+
+<header>
+    <h1>SENIOR DESIGN LAB 3</h1>
+    <div class="subtitle">Project Dashboard</div>
+</header>
+
+<nav class="horizontal-nav">
+    <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li class="dropdown">
+            <a href="index.html#team-section" class="dropbtn">Team Members</a>
+            <div class="dropdown-content">
+                <a href="Thomas.html">Thomas Tsilimigras</a>
+                <a href="Joshua.html">Joshua Abello</a>
+                <a href="Manny.html">Manvir Guraya</a>
+                <a href="Nathan.html">Nathan Brewer</a>
             </div>
-            
-            <div class="member-profile">
-                <div class="profile-image">
-                    <img src="/pics/joshuaPic.JPG" alt="Joshua Abello">
-                </div>
-                <div class="profile-details">
-                    <h3>About Joshua</h3>
-                    <p>Joshua is a dedicated engineering student with a passion for innovative solutions and team collaboration. He brings strong technical skills and creative problem-solving abilities to the team.</p>
-                                        
-                    <h3>Contact Information</h3>
-                    <p>Email: joshua.abello@example.com</p>
-                    <p>Phone: (555) 987-6543</p>
-                    <p>LinkedIn: linkedin.com/in/joshuaabello</p>
-                </div>
+        </li>
+        <li><a href="Protected.html">Protected Page</a></li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <main class="content">
+
+        <h2>Joshua Abello</h2>
+
+        <!-- ABOUT + CONTACT INFO BOX -->
+        <div class="member-info">
+
+            <div class="member-image">
+                <img src="/pics/joshuaPic.JPG" alt="Joshua Abello">
+            </div>
+
+            <div class="member-details">
+                <h3>About Joshua</h3>
+                <p>Joshua is a dedicated engineering student with a passion for innovative solutions and team collaboration. He brings strong technical skills and creative problem-solving abilities to the team.</p>
+
+                <h3>Contact Information</h3>
+                <p>Email: joshua.abello@example.com</p>
+                <p>Phone: (555) 987-6543</p>
+                <p>LinkedIn: linkedin.com/in/joshuaabello</p>
             </div>
         </div>
-        
-        <div class="contact-section">
+
+        <!-- SEPARATE CONTACT FORM BOX -->
+        <div class="contact-box">
             <h3>Contact Joshua</h3>
+
             <form id="contactForm">
                 <input type="text" id="name" placeholder="Your Name" required>
                 <input type="email" id="email" placeholder="Your Email" required>
@@ -188,16 +232,17 @@
                 <button type="submit">Send Message</button>
                 <div id="formMessage" class="message"></div>
             </form>
-            <br>
         </div>
-    </div>
 
+    </main>
+</div>
 
-    <footer>
-        <p>Senior Design Lab 3 &copy; 2025</p>
-        <p>Team Device Manager</p>
-    </footer>
+<footer>
+    <p>Senior Design Lab 3 © 2025</p>
+    <p>Team Device Manager</p>
+</footer>
 
-    <script src="../scripts/joshua.js"></script>
+<script src="../scripts/joshua.js"></script>
+
 </body>
 </html>
