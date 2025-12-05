@@ -1,12 +1,14 @@
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config(); // Load .env file
 
-// Get expected hash from .env file
+// Load expected hash from .env
 const EXPECTED_HASH = process.env.LAB_PASSWORD_HASH;
 
-// Make sure hash is set
+// If not found, exit so you see the error
 if (!EXPECTED_HASH) {
-    console.log("error reashing hash")
+    console.log("error reashing hash");
     process.exit(1);
 }
 
@@ -24,37 +26,27 @@ function hashPassword(password) {
 }
 
 const server = http.createServer((req, res) => {
-    // ==================== CORS HEADERS ====================
-    // These headers allow the frontend (on a different port) to access this server
-    
-    // NOTE FOR TOMMY: replace '*' with specific domain like once we have the website set up
+    // ==================== CORS ====================
     res.setHeader('Access-Control-Allow-Origin', '*');
-    
-    // POST is for submitting password data, OPTIONS is for preflight requests
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    
-    // Specify which request headers the browser can send
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
     // allow cookies/authentication to be sent with requests
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    // ==================== END CORS HEADERS ====================
-    
-    // manage preflight OPTIONS request
+    // ==================== END CORS ====================
+
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
         res.end();
         return;
     }
-    
-    // Handle POST request to /verify
-    else if (req.method === 'POST' && req.url === '/verify') {
+
+    // ==================== POST /verify ====================
+    if (req.method === 'POST' && req.url === '/verify') {
         let body = '';
-        
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-        
+
+        req.on('data', chunk => { body += chunk.toString(); });
+
         req.on('end', () => {
             try {
                 // Parse JSON body
@@ -62,119 +54,169 @@ const server = http.createServer((req, res) => {
                 try {
                     const data = JSON.parse(body);
                     password = data.password || '';
-                } catch (jsonError) {
-                    // Try URL encoded as fallback
+                } catch {
                     const params = new URLSearchParams(body);
                     password = params.get('password') || '';
                 }
-                
+
                 if (!password) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ 
-                        success: false, 
-                        error: 'No password provided' 
-                    }));
+                    res.end(JSON.stringify({ success: false, error: 'No password provided' }));
                     return;
                 }
-                
-                // SERVER computes the hash from plain text password
-                const hashedInput = hashPassword(password);
-                const success = (hashedInput === EXPECTED_HASH);
-                
-                
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ 
-                    success: success,
-                    timestamp: Date.now()
-                }));
-                
-            } catch (error) {
-                console.error('Error processing request:', error);
+
+                const hashed = hashPassword(password);
+
+// DEBUG: print what the server sees
+console.log("Verify debug -> password:", JSON.stringify(password),
+            "hashed:", hashed,
+            "expected:", EXPECTED_HASH);
+
+const success = (hashed === EXPECTED_HASH);
+
+res.writeHead(200, { 'Content-Type': 'application/json' });
+res.end(JSON.stringify({ success, timestamp: Date.now() }));
+
+
+            } catch (err) {
+                console.error("verify error:", err);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ 
-                    success: false, 
-                    error: 'Internal server error' 
-                }));
+                res.end(JSON.stringify({ success: false, error: 'Server error' }));
             }
         });
+
+        return;
     }
-    else if (req.method === 'POST' && req.url === '/contact') {
-    let body = '';
 
-    req.on('data', chunk => {
-        body += chunk.toString();
-    });
+    // ==================== POST /contact ====================
+    if (req.method === 'POST' && req.url === '/contact') {
+        let body = '';
 
-    req.on('end', () => {
-        try {
-            const data = JSON.parse(body);
-            const { name, email, message, member } = data;
+        req.on('data', chunk => { body += chunk.toString(); });
 
-            if (!name || !email || !message) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: false, error: 'Incomplete form' }));
-                return;
-            }
+        req.on('end', () => {
+            try {
+                const data = JSON.parse(body);
+                const { name, email, message, member } = data;
 
-            // Create messages directory if not exists
-            const fs = require('fs');
-            const path = require('path');
-            const dir = path.join(__dirname, "protected_messages");
+                if (!name || !email || !message) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, error: 'Missing fields' }));
+                    return;
+                }
 
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir);
-            }
+                // Create directory if needed
+                const dir = path.join(__dirname, "protected_messages");
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir);
+                }
 
-            // filename
-            const timestamp = Date.now();
-            const safeName = name.replace(/[^a-z0-9]/gi, "_");
-            const filename = `${timestamp}_${safeName}.html`;
-            const filepath = path.join(dir, filename);
+                const timestamp = Date.now();
+                const safe = name.replace(/[^a-z0-9]/gi, "_");
+                const filename = `${timestamp}_${safe}.html`;
+                const filepath = path.join(dir, filename);
 
-            // build HTML content
-            const html = `
-<!DOCTYPE html>
+                const html = `<!DOCTYPE html>
 <html>
+<head>
+<meta charset="utf-8">
+<title>Message from ${name}</title>
+</head>
 <body>
 <h2>Message Submission</h2>
+<p><strong>Team Member:</strong> ${member || "Unknown"}</p>
 <p><strong>Name:</strong> ${name}</p>
 <p><strong>Email:</strong> ${email}</p>
 <p><strong>Time:</strong> ${new Date(timestamp).toLocaleString()}</p>
 <hr>
 <p>${message.replace(/\n/g, "<br>")}</p>
 </body>
-</html>
-`;
+</html>`;
 
-            // Write the file
-            fs.writeFileSync(filepath, html);
+                fs.writeFileSync(filepath, html);
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, file: filename }));
+
+            } catch (err) {
+                console.error("contact error:", err);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, error: 'Server error' }));
+            }
+        });
+
+        return;
+    }
+
+    // ==================== GET /messages ====================
+    if (req.method === 'GET' && req.url === '/messages') {
+        const dir = path.join(__dirname, "protected_messages");
+
+        if (!fs.existsSync(dir)) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify([]));
+            return;
+        }
+
+        fs.readdir(dir, (err, files) => {
+            if (err) {
+                console.error("messages read error:", err);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Unable to read messages directory' }));
+                return;
+            }
+
+            const htmlFiles = files.filter(f => f.toLowerCase().endsWith(".html"));
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({
-                success: true,
-                file: filename   // we will use this later
-            }));
+            res.end(JSON.stringify(htmlFiles));
+        });
 
-        } catch (error) {
-            console.error("Error saving message:", error);
-
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({
-                success: false,
-                error: 'Server error'
-            }));
-        }
-    });
-}
-
-    else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Not found' }));
+        return;
     }
+
+    // ==================== GET /messages/<filename> ====================
+    if (req.method === 'GET' && req.url.startsWith('/messages/')) {
+        const file = decodeURIComponent(req.url.replace('/messages/', ''));
+
+        if (file.includes("..") || file.includes("/") || file.includes("\\")) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end("Invalid file name");
+            return;
+        }
+
+        const dir = path.join(__dirname, "protected_messages");
+        const filepath = path.join(dir, file);
+
+        if (!fs.existsSync(filepath)) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end("Not found");
+            return;
+        }
+
+        fs.readFile(filepath, (err, data) => {
+            if (err) {
+                console.error("file read error:", err);
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end("Error reading file");
+                return;
+            }
+
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
+
+        return;
+    }
+
+    // ==================== DEFAULT 404 ====================
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
 });
 
+// EXPLICITLY BIND TO IPv4 SO CURL WORKS
 const PORT = 3000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`Password verification server running on http://localhost:${PORT}`);
-    console.log(`Hash loaded from .env file`);
+    console.log("Hash loaded from .env file");
 });
